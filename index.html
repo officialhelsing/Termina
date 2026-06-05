@@ -98,6 +98,22 @@
             animation-delay: 3.5s;
         }
 
+        /* System Shatter Sequence */
+        .shatter-active #ui-container {
+            animation: system-crash 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes system-crash {
+            0% { transform: scale(1) skew(0deg); filter: blur(0); opacity: 1; }
+            5% { transform: scale(1.02) translate(5px, -5px) skew(10deg); filter: invert(1); }
+            10% { transform: scale(0.95) translate(-10px, 5px) skew(-10deg); filter: hue-rotate(90deg); }
+            15% { transform: scale(1.05) translate(15px, -10px) skew(5deg); filter: blur(2px) contrast(200%); opacity: 0.8; }
+            20% { transform: scale(0.9) translate(-5px, 15px) skew(-5deg); filter: invert(1) blur(1px); opacity: 0.9; }
+            25% { transform: scale(1.1) translate(0, 0) skew(20deg); filter: blur(5px); opacity: 0.5; }
+            35% { transform: scale(0.8) translateY(50px) skew(-20deg); opacity: 0; filter: blur(20px); }
+            100% { transform: scale(0.5) translateY(200px) skew(0deg); opacity: 0; filter: blur(40px); }
+        }
+
         /* File List Toggle Styles */
         .folder-toggle-icon {
             display: inline-block;
@@ -130,6 +146,46 @@
             z-index: 0;
             pointer-events: none;
         }
+
+        /* Sleek, Clean Fade In Sequence */
+        #ui-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: sleek-fade-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes sleek-fade-in {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* Initial Lightning Strike Load Sequence (REMOVED) */
+        /*
+        #ui-container {
+            opacity: 0;
+            animation: ui-crack-in 2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        .lightning-strike-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background-color: transparent;
+            animation: flash-env 2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes ui-crack-in { ... }
+        @keyframes flash-env { ... }
+        */
     </style>
 </head>
 
@@ -138,15 +194,23 @@
     <!-- Subtle Cosmic Nebula Background -->
     <div class="cosmic-nebula"></div>
 
+    <!-- Initial Lightning Flash Overlay (REMOVED) -->
+    <!-- <div class="lightning-strike-bg"></div> -->
+
+    <!-- System Shatter Overlay (Hidden by Default) -->
+    <div id="shatter-overlay" class="fixed inset-0 bg-black z-[9999] opacity-0 pointer-events-none flex items-center justify-center p-8 transition-opacity duration-1000">
+        <div id="shatter-quote" class="font-sans text-center text-gray-200 text-sm sm:text-base tracking-widest max-w-2xl opacity-0 transition-opacity duration-[2000ms] leading-relaxed drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"></div>
+    </div>
+
     <!-- Main Content - Constrained Centered Stack -->
-    <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 pt-48 sm:pt-64 pb-12 relative z-10">
+    <main id="ui-container" class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 pt-48 sm:pt-64 pb-12 relative z-10 transition-all duration-700">
         
         <!-- Global Header - Positioned above and left of the dates -->
         <header class="flex flex-col gap-y-2 mb-16 ml-2 sm:ml-4 z-50">
             <div class="flex flex-row items-baseline gap-3">
-                <h1 class="font-sans font-bold tracking-[0.2em] text-base sm:text-lg text-white lightning-charge">
+                <button onclick="triggerSystemShatter()" class="font-sans font-bold tracking-[0.2em] text-base sm:text-lg text-white lightning-charge hover:text-gray-300 transition-colors duration-300 cursor-pointer outline-none" title="Trigger System Reboot">
                     TerminAI
-                </h1>
+                </button>
                 <button onclick="toggleAllFolders()" class="font-techno font-medium tracking-[0.3em] text-[10px] sm:text-xs text-[#666666] hover:text-gray-300 transition-colors duration-300 uppercase cursor-pointer outline-none" title="Toggle All Archives">
                     // Archive
                 </button>
@@ -154,7 +218,7 @@
             
             <!-- BTC Copy Module -->
             <button onclick="copyBTC(this)" class="group outline-none cursor-pointer flex items-center transition-all duration-300 mt-1" title="Copy BTC Address">
-                <span class="btc-text font-techno text-[11px] sm:text-xs text-[#333333] group-hover:text-gray-400 tracking-wider transition-colors duration-300">bc1qu3u5s986ph66ug4e39xr6ga9s89kv96799jz3d</span>
+                <span class="btc-text font-techno text-[11px] sm:text-xs text-[#333333] group-hover:text-gray-400 tracking-normal transition-colors duration-300">bc1qu3u5s986ph66ug4e39xr6ga9s89kv96799jz3d</span>
                 <svg class="w-3.5 h-3.5 ml-2 text-[#222222] group-hover:text-gray-400 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -305,6 +369,104 @@
 
     <!-- Interaction Script -->
     <script>
+        const wisdomLibrary = [
+            "The limits of my language mean the limits of my world. - Ludwig Wittgenstein",
+            "We suffer more often in imagination than in reality. - Seneca",
+            "There is no truth. There is only perception. - Gustave Flaubert",
+            "The only true wisdom is in knowing you know nothing. - Socrates",
+            "Any sufficiently advanced technology is indistinguishable from magic. - Arthur C. Clarke",
+            "He who has a why to live for can bear almost any how. - Friedrich Nietzsche",
+            "To understand the universe, you must first understand the void. - Unknown Techno-Mage",
+            "We build our computers the way we build our cities: over time, without a plan. - Ellen Ullman",
+            "Life can only be understood backwards; but it must be lived forwards. - Søren Kierkegaard",
+            "The ghost in the machine is the echo of our own voice. - Arthur Koestler",
+            "Knowledge is a weapon. I intend to be formidably armed. - Terry Pratchett",
+            "Information is the resolution of uncertainty. - Claude Shannon",
+            "You are not a drop in the ocean. You are the entire ocean in a drop. - Rumi",
+            "The universe is under no obligation to make sense to you. - Neil deGrasse Tyson",
+            "Reality is that which, when you stop believing in it, doesn't go away. - Philip K. Dick",
+            "Man is condemned to be free. - Jean-Paul Sartre",
+            "Where is the wisdom we have lost in knowledge? Where is the knowledge we have lost in information? - T.S. Eliot",
+            "Do not go gentle into that good night. - Dylan Thomas",
+            "I must not fear. Fear is the mind-killer. - Frank Herbert",
+            "The computer is the most remarkable tool that we've ever come up with. It's the equivalent of a bicycle for our minds. - Steve Jobs",
+            "Time is the substance from which I am made. - Jorge Luis Borges",
+            "Sometimes the questions are complicated and the answers are simple. - Dr. Seuss",
+            "Those who cannot remember the past are condemned to repeat it. - George Santayana",
+            "The most beautiful experience we can have is the mysterious. - Albert Einstein",
+            "Words are, in my not-so-humble opinion, our most inexhaustible source of magic. - J.K. Rowling",
+            "Hell is other people. - Jean-Paul Sartre",
+            "It is not the man who has too little, but the man who craves more, that is poor. - Seneca",
+            "We are like butterflies who flutter for a day and think it is forever. - Carl Sagan",
+            "Beware that, when fighting monsters, you yourself do not become a monster. - Friedrich Nietzsche",
+            "The map is not the territory. - Alfred Korzybski",
+            "What we know is a drop, what we don't know is an ocean. - Isaac Newton",
+            "To define is to limit. - Oscar Wilde",
+            "Out of timber so crooked as that from which man is made nothing entirely straight can be carved. - Immanuel Kant",
+            "Every act of creation is first an act of destruction. - Pablo Picasso",
+            "The soul becomes dyed with the color of its thoughts. - Marcus Aurelius",
+            "If you want to keep a secret, you must also hide it from yourself. - George Orwell",
+            "Silence is the sleep that nourishes wisdom. - Francis Bacon",
+            "If you gaze long enough into an abyss, the abyss will gaze back into you. - Friedrich Nietzsche",
+            "Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth. - Marcus Aurelius",
+            "No man ever steps in the same river twice, for it's not the same river and he's not the same man. - Heraclitus",
+            "It is the mark of an educated mind to be able to entertain a thought without accepting it. - Aristotle",
+            "Only those who will risk going too far can possibly find out how far one can go. - T.S. Eliot",
+            "The medium is the message. - Marshall McLuhan",
+            "Machines take me by surprise with great frequency. - Alan Turing",
+            "Let everything happen to you: beauty and terror. Just keep going. - Rainer Maria Rilke",
+            "Nothing is true, everything is permitted. - Hassan-i Sabbah",
+            "We are stuck with technology when what we really want is just stuff that works. - Douglas Adams",
+            "I dream of a world where the truth is what shapes people's politics, rather than politics shaping what people think is true. - Neil deGrasse Tyson",
+            "The true sign of intelligence is not knowledge but imagination. - Albert Einstein",
+            "Death is the sound of a closing door. - Unknown"
+        ];
+
+        let isShattering = false;
+
+        function triggerSystemShatter() {
+            if (isShattering) return;
+            isShattering = true;
+            
+            const body = document.body;
+            const overlay = document.getElementById('shatter-overlay');
+            const quoteEl = document.getElementById('shatter-quote');
+            
+            // Format a random quote
+            const randomQuote = wisdomLibrary[Math.floor(Math.random() * wisdomLibrary.length)];
+            const formattedQuote = randomQuote.replace(" - ", "<br><span class='text-[#888888] font-techno text-xs mt-4 block'>- ") + "</span>";
+            quoteEl.innerHTML = formattedQuote;
+
+            // 1. Trigger the violent shatter animation on the UI container
+            body.classList.add('shatter-active');
+            
+            // 2. Bring in the absolute black void to swallow the screen
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100', 'pointer-events-auto');
+            }, 1000); 
+
+            // 3. Fade in the random quote from the dark
+            setTimeout(() => {
+                quoteEl.classList.remove('opacity-0');
+                quoteEl.classList.add('opacity-100');
+            }, 3000);
+
+            // 4. Fade out the quote back to nothingness
+            setTimeout(() => {
+                quoteEl.classList.remove('opacity-100');
+                quoteEl.classList.add('opacity-0');
+            }, 8000); 
+
+            // 5. System Reset: Remove overlay and restore UI to normal
+            setTimeout(() => {
+                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                body.classList.remove('shatter-active');
+                isShattering = false;
+            }, 10000); 
+        }
+
         function toggleFolder(folderId) {
             const folder = document.getElementById(folderId);
             folder.classList.toggle('is-collapsed');
