@@ -85,6 +85,19 @@
             }
         }
 
+        /* Secondary System Glitches */
+        .glitch-minor {
+            display: inline-block;
+            animation: storm-flicker 6s infinite;
+            animation-delay: 1.2s;
+        }
+
+        .glitch-micro {
+            display: inline-block;
+            animation: storm-flicker 8s infinite;
+            animation-delay: 3.5s;
+        }
+
         /* File List Toggle Styles */
         .folder-toggle-icon {
             display: inline-block;
@@ -125,23 +138,34 @@
     <!-- Subtle Cosmic Nebula Background -->
     <div class="cosmic-nebula"></div>
 
-    <!-- Global Header - Absolute Top Left -->
-    <header class="absolute top-6 left-6 sm:top-10 sm:left-10 flex flex-row items-baseline gap-3 z-50">
-        <h1 class="font-sans font-bold tracking-[0.2em] text-base sm:text-lg text-white lightning-charge">
-            TerminAI
-        </h1>
-        <span class="font-techno font-medium tracking-[0.3em] text-[10px] sm:text-xs text-[#666666] uppercase">
-            // Archive
-        </span>
-    </header>
-
     <!-- Main Content - Constrained Centered Stack -->
-    <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 pt-48 sm:pt-56 pb-12 relative z-10">
+    <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 pt-48 sm:pt-64 pb-12 relative z-10">
         
+        <!-- Global Header - Positioned above and left of the dates -->
+        <header class="flex flex-col gap-y-2 mb-16 ml-2 sm:ml-4 z-50">
+            <div class="flex flex-row items-baseline gap-3">
+                <h1 class="font-sans font-bold tracking-[0.2em] text-base sm:text-lg text-white lightning-charge">
+                    TerminAI
+                </h1>
+                <button onclick="toggleAllFolders()" class="font-techno font-medium tracking-[0.3em] text-[10px] sm:text-xs text-[#666666] hover:text-gray-300 transition-colors duration-300 uppercase cursor-pointer outline-none" title="Toggle All Archives">
+                    // Archive
+                </button>
+            </div>
+            
+            <!-- BTC Copy Module -->
+            <button onclick="copyBTC(this)" class="group outline-none cursor-pointer flex items-center transition-all duration-300 mt-1" title="Copy BTC Address">
+                <span class="btc-text font-techno text-[11px] sm:text-xs text-[#333333] group-hover:text-gray-400 tracking-wider transition-colors duration-300">bc1qu3u5s986ph66ug4e39xr6ga9s89kv96799jz3d</span>
+                <svg class="w-3.5 h-3.5 ml-2 text-[#222222] group-hover:text-gray-400 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
+        </header>
+
         <!-- SECTION 01: MAR 29, 2026 -->
-        <section class="folder-section w-full mb-10 ml-12" id="epoch-1">
+        <section class="folder-section w-full mb-10 ml-12 is-collapsed" id="epoch-1">
             <button class="w-full text-left pb-4 flex items-center cursor-pointer group outline-none" onclick="toggleFolder('epoch-1')">
-                <span class="font-techno text-base tracking-widest uppercase text-[#888888] group-hover:text-gray-300 transition-colors duration-300">
+                <span class="font-techno text-[10px] sm:text-xs tracking-widest uppercase text-[#888888] group-hover:text-gray-300 transition-colors duration-300">
                     <span class="folder-toggle-icon">&gt;</span> MAR 29, 2026
                 </span>
             </button>
@@ -194,9 +218,9 @@
         </section>
 
         <!-- SECTION 02: JUN 1, 2026 -->
-        <section class="folder-section w-full mb-24 ml-12" id="epoch-2">
+        <section class="folder-section w-full mb-24 ml-12 is-collapsed" id="epoch-2">
             <button class="w-full text-left pb-4 flex items-center cursor-pointer group outline-none" onclick="toggleFolder('epoch-2')">
-                <span class="font-techno text-base tracking-widest uppercase text-[#888888] group-hover:text-gray-300 transition-colors duration-300">
+                <span class="font-techno text-[10px] sm:text-xs tracking-widest uppercase text-[#888888] group-hover:text-gray-300 transition-colors duration-300">
                     <span class="folder-toggle-icon">&gt;</span> JUN 1, 2026
                 </span>
             </button>
@@ -284,6 +308,57 @@
         function toggleFolder(folderId) {
             const folder = document.getElementById(folderId);
             folder.classList.toggle('is-collapsed');
+        }
+
+        function toggleAllFolders() {
+            const folders = document.querySelectorAll('.folder-section');
+            let anyOpen = false;
+            
+            // Check if any folders are currently open
+            folders.forEach(f => {
+                if (!f.classList.contains('is-collapsed')) {
+                    anyOpen = true;
+                }
+            });
+
+            // If any are open, close all. If all are closed, open all.
+            folders.forEach(f => {
+                if (anyOpen) {
+                    f.classList.add('is-collapsed');
+                } else {
+                    f.classList.remove('is-collapsed');
+                }
+            });
+        }
+
+        function copyBTC(btn) {
+            const btcAddress = "bc1qu3u5s986ph66ug4e39xr6ga9s89kv96799jz3d";
+            const textElement = btn.querySelector('.btc-text');
+            
+            // Fallback copy method to bypass iframe strictness in previews
+            const textArea = document.createElement("textarea");
+            textArea.value = btcAddress;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                // Flash success text
+                textElement.innerText = "COPIED TO CLIPBOARD";
+                textElement.classList.remove('text-[#333333]', 'group-hover:text-gray-400');
+                textElement.classList.add('text-cyan-500', 'jester-glow', 'text-shadow-[0_0_8px_rgba(6,182,212,0.8)]');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    textElement.innerText = btcAddress;
+                    textElement.classList.remove('text-cyan-500', 'jester-glow', 'text-shadow-[0_0_8px_rgba(6,182,212,0.8)]');
+                    textElement.classList.add('text-[#333333]', 'group-hover:text-gray-400');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            
+            document.body.removeChild(textArea);
         }
     </script>
 </body>
